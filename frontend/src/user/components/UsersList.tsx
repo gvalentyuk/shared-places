@@ -8,7 +8,7 @@ export type User = {
   id: string;
   image: string;
   name: string;
-  places: number;
+  places: [];
 };
 
 type Props = {
@@ -34,7 +34,7 @@ const UsersList: React.FC<Props> = (props) => {
             key={item.id}
             id={item.id}
             name={item.name}
-            placesCount={item.places}
+            placesCount={item.places.length}
             image={item.image}
           />
         );

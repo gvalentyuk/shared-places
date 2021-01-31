@@ -2,33 +2,32 @@ const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 5,
-    select: false,
-  },
-  image: {
-    type: String,
-  },
-  places: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Place",
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
       required: true,
     },
-  ],
-});
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 5,
+      select: false,
+    },
+    image: {
+      type: String,
+    },
+  },
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -48,5 +47,12 @@ UserSchema.methods.signJWToken = function () {
     expiresIn: 86400,
   });
 };
+
+UserSchema.virtual('places',{
+    ref: 'Place',
+    localField:'_id',
+    foreignField: 'creator',
+    justOne: false
+})
 
 module.exports = model("User", UserSchema);

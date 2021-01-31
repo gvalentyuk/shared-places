@@ -4,7 +4,7 @@ const User = require("../models/User");
 const HttpError = require("../models/http-error");
 
 const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
+  const users = await User.find().populate('places');
   return res.json({ users });
 });
 
@@ -25,6 +25,7 @@ const signup = asyncHandler(async (req, res, next) => {
     name,
     email,
     password,
+    image: 'https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg'
   });
 
   const token = createdUser.signJWToken();

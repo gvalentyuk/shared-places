@@ -18,9 +18,11 @@ import "./App.css";
 
 const App: React.FC = () => {
   const [isLogged, setIsLogged] = useState(false);
-
-  const login = useCallback(() => {
+  const [token, setToken] = useState("");
+  console.log(token);
+  const login = useCallback((token) => {
     setIsLogged(true);
+    setToken(token);
   }, []);
 
   const logout = useCallback(() => {
@@ -50,7 +52,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLogged, login, logout }}>
+    <AuthContext.Provider value={{ isLogged, login, logout, token }}>
       <Router>
         <MainNavigation />
         <main>{routes} </main>

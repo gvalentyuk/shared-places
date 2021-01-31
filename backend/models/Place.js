@@ -18,6 +18,9 @@ const PlaceSchema = Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+  },
   creator: {
     type: Schema.ObjectId,
     ref: "User",
