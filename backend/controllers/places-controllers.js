@@ -40,17 +40,15 @@ const createPlace = asyncHandler(async (req, res, next) => {
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
+  const { title, description, address } = req.body;
 
-  const { title, description, address, creator } = req.body;
-
-  const place = new Place({
+  const place = await Place.create({
     title,
     description,
     address,
-    creator,
+    creator: req.user.id,
   });
-  const createdPlace = await place.save();
-  return res.status(201).json({ place: createdPlace });
+  return res.status(201).json({ place });
 });
 
 //PATCH Update place by id
@@ -61,8 +59,12 @@ const updatePlace = asyncHandler(async (req, res, next) => {
   }
 
   const placeId = req.params.pid;
+  let place = await Place.findById(placeId);
 
-  const place = await Place.findByIdAndUpdate(placeId, req.body, {
+  if (place.creator.toString() !== req.user.id) {
+    throw new HttpError("You can't update this bootcamp", 401);
+  }
+  place = await Place.findByIdAndUpdate(placeId, req.body, {
     runValidators: true,
     new: true,
   });
@@ -73,6 +75,11 @@ const updatePlace = asyncHandler(async (req, res, next) => {
 //DELETE Delete place by id
 const deletePlace = asyncHandler(async (req, res, next) => {
   const placeId = req.params.pid;
+  const place = await Place.findById(placeId);
+  if (place.creator.toString() !== req.user.id) {
+    throw new HttpError("You can't delete this bootcamp", 401);
+  }
+
   await Place.findByIdAndRemove(placeId);
   return res.status(200).json({ message: "Deleted place." });
 });
