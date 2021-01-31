@@ -19,7 +19,8 @@ const PlaceSchema = Schema({
     required: true,
   },
   creator: {
-    type: String,
+    type: Schema.ObjectId,
+    ref: "User",
     required: true,
   },
 });
@@ -34,4 +35,5 @@ PlaceSchema.pre("save", async function (next) {
 
   next();
 });
+
 module.exports = model("Place", PlaceSchema);

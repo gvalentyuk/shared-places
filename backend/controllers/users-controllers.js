@@ -1,55 +1,59 @@
-const uuid = require('uuid/v4');
-const { validationResult } = require('express-validator');
+const asyncHandler = require("../util/asyncHandler");
+const { validationResult } = require("express-validator");
+const User = require("../models/User");
+const HttpError = require("../models/http-error");
 
-const HttpError = require('../models/http-error');
+const getUsers = asyncHandler(async (req, res, next) => {
+  const users = await User.find();
+  return res.json({ users });
+});
 
-const DUMMY_USERS = [
-  {
-    id: 'u1',
-    name: 'Max Schwarz',
-    email: 'test@test.com',
-    password: 'testers'
-  }
-];
-
-const getUsers = (req, res, next) => {
-  res.json({ users: DUMMY_USERS });
-};
-
-const signup = (req, res, next) => {
+const signup = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError('Invalid inputs passed, please check your data.', 422);
+    throw new HttpError("Invalid inputs passed, please check your data.", 422);
   }
   const { name, email, password } = req.body;
 
-  const hasUser = DUMMY_USERS.find(u => u.email === email);
-  if (hasUser) {
-    throw new HttpError('Could not create user, email already exists.', 422);
+  const user = await User.findOne({ email });
+
+  if (user) {
+    throw new HttpError("User whith this email already exist.", 422);
   }
 
-  const createdUser = {
-    id: uuid(),
-    name, // name: name
+  const createdUser = await User.create({
+    name,
     email,
-    password
-  };
+    password,
+  });
 
-  DUMMY_USERS.push(createdUser);
+  const token = createdUser.signJWToken();
+  return res.status(201).json({ token });
+});
 
-  res.status(201).json({user: createdUser});
-};
-
-const login = (req, res, next) => {
+const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  const identifiedUser = DUMMY_USERS.find(u => u.email === email);
-  if (!identifiedUser || identifiedUser.password !== password) {
-    throw new HttpError('Could not identify user, credentials seem to be wrong.', 401);
+  const user = await User.findOne({ email }).select("password");
+  if (!user) {
+    throw new HttpError(
+      "Could not identify user, credentials seem to be wrong.",
+      401
+    );
   }
 
-  res.json({message: 'Logged in!'});
-};
+  const isMatch = await user.matchPassword(password);
+  if (!isMatch) {
+    throw new HttpError(
+      "Could not identify user, credentials seem to be wrong.",
+      401
+    );
+  }
+
+  const token = user.signJWToken();
+
+  return res.json({ token });
+});
 
 exports.getUsers = getUsers;
 exports.signup = signup;
