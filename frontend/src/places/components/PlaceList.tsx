@@ -12,7 +12,7 @@ type Place = {
   description: string;
   address: string;
   creator: string;
-  coordinates: {
+  location: {
     lng: number;
     lat: number;
   };
@@ -45,7 +45,7 @@ const PlaceList: React.FC<Props> = (props) => {
           description={place.description}
           address={place.address}
           creatorId={place.creator}
-          coordinates={place.coordinates}
+          location={place.location}
         />
       ))}
     </ul>

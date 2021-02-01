@@ -14,7 +14,7 @@ type Props = {
   description: string;
   address: string;
   creatorId: string;
-  coordinates: {
+  location: {
     lng: number;
     lat: number;
   };
@@ -42,7 +42,7 @@ const PlaceItem: React.FC<Props> = (props) => {
         footer={<Button onClick={closeMap}>CLOSE</Button>}
       >
         <div className="map-container">
-          <Map center={props.coordinates} zoom={16} />
+          <Map center={props.location} zoom={16} />
         </div>
       </Modal>
       <Modal

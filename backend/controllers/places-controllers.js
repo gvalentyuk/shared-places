@@ -20,7 +20,6 @@ const getPlaceById = asyncHandler(async (req, res, next) => {
 // GET Get places by user id
 const getPlacesByUserId = asyncHandler(async (req, res, next) => {
   const userId = req.params.uid;
-  console.log(userId);
   const places = await Place.find({ creator: userId });
 
   if (!places || places.length === 0) {

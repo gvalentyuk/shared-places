@@ -19,7 +19,7 @@ import "./App.css";
 const App: React.FC = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [token, setToken] = useState("");
-  console.log(token);
+  
   const login = useCallback((token) => {
     setIsLogged(true);
     setToken(token);
