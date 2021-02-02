@@ -1,25 +1,14 @@
 import React from "react";
 
+import { Place } from "../place-type";
 import PlaceItem from "./PlaceItem";
 import Card from "../../shared/UI/Card";
-import Button from '../../shared/FormElements/Button';
+import Button from "../../shared/FormElements/Button";
 import "./PlaceList.css";
-
-type Place = {
-  _id: string;
-  image: string;
-  title: string;
-  description: string;
-  address: string;
-  creator: string;
-  location: {
-    lng: number;
-    lat: number;
-  };
-};
 
 type Props = {
   items: Place[];
+  filterList: (id: string) => void;
 };
 
 const PlaceList: React.FC<Props> = (props) => {
@@ -46,6 +35,7 @@ const PlaceList: React.FC<Props> = (props) => {
           address={place.address}
           creatorId={place.creator}
           location={place.location}
+          filterList={props.filterList}
         />
       ))}
     </ul>

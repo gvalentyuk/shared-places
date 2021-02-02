@@ -17,7 +17,7 @@ const NavLinks: React.FC = () => {
       </li>
       {auth.isLogged && (
         <li>
-          <NavLink to="/u1/places">MY PLACES</NavLink>
+          <NavLink to={`/${auth.user.id}/places`}>MY PLACES</NavLink>
         </li>
       )}
       {auth.isLogged && (

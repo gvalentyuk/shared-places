@@ -18,11 +18,11 @@ type Props = {
 const UsersList: React.FC<Props> = (props) => {
   if (!props.items.length) {
     return (
-      <Card>
-        <div className="center">
+      <div className="center">
+        <Card>
           <h2>Users not found.</h2>
-        </div>
-      </Card>
+        </Card>
+      </div>
     );
   }
 

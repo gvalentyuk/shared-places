@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
-import ErrorModal from "../../shared/UI/ErrorModal";
-import LoadingSpinner from "../../shared/UI/LoadingSpinner";
-import { AuthContext } from "../../context/AuthContext";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHttp } from "../../hooks/http-hook";
 import { useHistory } from "react-router-dom";
 
+import { AuthContext } from "../../context/AuthContext";
+import ImageUpload from "../../shared/FormElements/ImageUpload";
+import ErrorModal from "../../shared/UI/ErrorModal";
+import LoadingSpinner from "../../shared/UI/LoadingSpinner";
 import Button from "../../shared/FormElements/Button";
 import "./Place.css";
 
@@ -17,32 +18,35 @@ type Place = {
 
 const NewPlace: React.FC = () => {
   const history = useHistory();
+  const [file, setFile] = useState<any>();
+  const [previewUrl, setPreviewUrl] = useState<any>();
   const { register, handleSubmit, errors, formState } = useForm({
     mode: "onChange",
   });
   const auth = useContext(AuthContext);
   const { error, clearError, isLoading, sendRequest } = useHttp();
   const onSubmit = async (data: Place) => {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("address", data.address);
+    formData.append("image", file);
+
     await sendRequest(
       "http://localhost:5000/api/places",
       "POST",
       {
-        "Content-Type": "application/json",
-        Authorization: auth.token,
+        Authorization: `Bearer ${auth.user.token}`,
       },
-      JSON.stringify({
-        title: data.title,
-        description: data.description,
-        address: data.address,
-      })
+      formData
     );
     history.push("/");
   };
 
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError}/>
-      {isLoading && <LoadingSpinner asOverlay/>}
+      <ErrorModal error={error} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       <form className="place-form" onSubmit={handleSubmit(onSubmit)}>
         <div
           className={`form-control ${errors.title && "form-control--invalid"}`}
@@ -54,7 +58,13 @@ const NewPlace: React.FC = () => {
             id="title"
           />
         </div>
-
+        <ImageUpload
+          file={file}
+          setFile={setFile}
+          previewUrl={previewUrl}
+          setPreviewUrl={setPreviewUrl}
+          center
+        />
         <div
           className={`form-control ${
             errors.description && "form-control--invalid"

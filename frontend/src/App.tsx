@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
+import { useAuth } from "./hooks/auth";
 
 import {
   BrowserRouter as Router,
@@ -17,18 +18,7 @@ import UpdatePlace from "./places/pages/UpdatePlace";
 import "./App.css";
 
 const App: React.FC = () => {
-  const [isLogged, setIsLogged] = useState(false);
-  const [token, setToken] = useState("");
-  
-  const login = useCallback((token) => {
-    setIsLogged(true);
-    setToken(token);
-  }, []);
-
-  const logout = useCallback(() => {
-    setIsLogged(false);
-  }, []);
-
+  const { isLogged, login, logout, user } = useAuth();
   let routes;
   if (isLogged) {
     routes = (
@@ -52,7 +42,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ isLogged, login, logout, token }}>
+    <AuthContext.Provider value={{ isLogged, login, logout, user }}>
       <Router>
         <MainNavigation />
         <main>{routes} </main>

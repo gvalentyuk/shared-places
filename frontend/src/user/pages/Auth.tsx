@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useHttp } from "../../hooks/http-hook";
 
+import ImageUpload from "../../shared/FormElements/ImageUpload";
 import LoadingSpinner from "../../shared/UI/LoadingSpinner";
 import ErrorModal from "../../shared/UI/ErrorModal";
 import Card from "../../shared/UI/Card";
@@ -17,13 +18,15 @@ type AuthProps = {
 
 const Auth: React.FC = () => {
   const auth = useContext(AuthContext);
-  const { isLoading, error, sendRequest, clearError } = useHttp();
+  const [file, setFile] = useState<any>();
+  const [previewUrl, setPreviewUrl] = useState<any>();
+  const [loginMode, setLoginMode] = useState(true);
   const [credentials, setCredentials] = useState({
     email: "",
     name: "",
     password: "",
   });
-  const [loginMode, setLoginMode] = useState(true);
+  const { isLoading, error, sendRequest, clearError } = useHttp();
   const { register, handleSubmit, errors, formState } = useForm({
     mode: "onChange",
   });
@@ -42,25 +45,22 @@ const Auth: React.FC = () => {
             password: credentials.password,
           })
         );
-        auth.login(`Bearer ${responseData.token}`);
+        auth.login(responseData);
       } catch (e) {}
     } else {
       try {
+        const formData = new FormData();
+        formData.append("name", credentials.name);
+        formData.append("email", credentials.email);
+        formData.append("password", credentials.password);
+        formData.append("image", file);
         const responseData = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          {
-            "Content-Type": "application/json",
-          },
-          JSON.stringify({
-            name: credentials.name,
-            email: credentials.email,
-            password: credentials.password,
-          })
+          {},
+          formData
         );
-
-        auth.login(`Bearer ${responseData.token}`);
-        
+        auth.login(responseData);
       } catch (e) {}
     }
   };
@@ -70,9 +70,7 @@ const Auth: React.FC = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const switchMode = () => {
-    setLoginMode((prevState) => !prevState);
-  };
+  const switchMode = () => setLoginMode((prevState) => !prevState);
 
   return (
     <React.Fragment>
@@ -101,7 +99,15 @@ const Auth: React.FC = () => {
               id="email"
             />
           </div>
-
+          {!loginMode && (
+            <ImageUpload
+              file={file}
+              setFile={setFile}
+              previewUrl={previewUrl}
+              setPreviewUrl={setPreviewUrl}
+              center
+            />
+          )}
           {!loginMode && (
             <div
               className={`form-control ${
@@ -134,7 +140,7 @@ const Auth: React.FC = () => {
               onChange={changeHandler}
               type="password"
               name="password"
-              ref={register({ required: true, minLength: 5, maxLength: 50 })}
+              ref={register({ required: true, minLength: 6, maxLength: 50 })}
             />
           </div>
 

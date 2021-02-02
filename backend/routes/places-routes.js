@@ -1,4 +1,5 @@
 const express = require("express");
+const fileUpload = require("../middleware/fileUpload");
 const { rules: addPlaceRules } = require("../util/validators/place");
 const { rules: updatePlaceRules } = require("../util/validators/updatePlace");
 const auth = require("../middleware/auth");
@@ -10,7 +11,9 @@ router.route("/:pid").get(placesControllers.getPlaceById);
 
 router.route("/user/:uid").get(placesControllers.getPlacesByUserId);
 
-router.route("/").post(auth, addPlaceRules, placesControllers.createPlace);
+router
+  .route("/")
+  .post(auth, fileUpload.single('image'), addPlaceRules, placesControllers.createPlace);
 
 router
   .route("/:pid")

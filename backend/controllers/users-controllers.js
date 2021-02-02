@@ -4,7 +4,7 @@ const User = require("../models/User");
 const HttpError = require("../models/http-error");
 
 const getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find().populate('places');
+  const users = await User.find().populate("places");
   return res.json({ users });
 });
 
@@ -25,17 +25,18 @@ const signup = asyncHandler(async (req, res, next) => {
     name,
     email,
     password,
-    image: 'https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg'
+    image: req.file.path,
   });
-
   const token = createdUser.signJWToken();
-  return res.status(201).json({ token });
+  return res
+    .status(201)
+    .json({ name: createdUser.name, id: createdUser.id, token });
 });
 
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).select("password");
+  const user = await User.findOne({ email }).select("+password");
   if (!user) {
     throw new HttpError(
       "Could not identify user, credentials seem to be wrong.",
@@ -52,8 +53,7 @@ const login = asyncHandler(async (req, res, next) => {
   }
 
   const token = user.signJWToken();
-
-  return res.json({ token });
+  return res.json({ name: user.name, id: user.id, token });
 });
 
 exports.getUsers = getUsers;

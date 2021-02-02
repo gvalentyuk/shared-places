@@ -44,15 +44,15 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 
 UserSchema.methods.signJWToken = function () {
   return jwt.sign({ id: this._id }, "asvasvasv13", {
-    expiresIn: 86400,
+    expiresIn: "1h",
   });
 };
 
-UserSchema.virtual('places',{
-    ref: 'Place',
-    localField:'_id',
-    foreignField: 'creator',
-    justOne: false
-})
+UserSchema.virtual("places", {
+  ref: "Place",
+  localField: "_id",
+  foreignField: "creator",
+  justOne: false,
+});
 
 module.exports = model("User", UserSchema);
