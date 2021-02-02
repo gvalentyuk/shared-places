@@ -27,7 +27,7 @@ const UpdatePlace: React.FC = () => {
   useEffect(() => {
     const fetchPlace = async () => {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`
+        `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`
       );
       setPlace(responseData.place);
     };
@@ -41,7 +41,7 @@ const UpdatePlace: React.FC = () => {
   const onSubmit = async (data: PlaceType) => {
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/places/${placeId}`,
         "PATCH",
         {
           "Content-Type": "application/json",

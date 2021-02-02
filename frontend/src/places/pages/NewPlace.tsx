@@ -33,7 +33,7 @@ const NewPlace: React.FC = () => {
     formData.append("image", file);
 
     await sendRequest(
-      "http://localhost:5000/api/places",
+      process.env.REACT_APP_BACKEND_URL + "/places",
       "POST",
       {
         Authorization: `Bearer ${auth.user.token}`,

@@ -35,7 +35,7 @@ const Auth: React.FC = () => {
     if (loginMode) {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          process.env.REACT_APP_BACKEND_URL + "/users/login",
           "POST",
           {
             "Content-Type": "application/json",
@@ -55,7 +55,7 @@ const Auth: React.FC = () => {
         formData.append("password", credentials.password);
         formData.append("image", file);
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          process.env.REACT_APP_BACKEND_URL + "/users/signup",
           "POST",
           {},
           formData

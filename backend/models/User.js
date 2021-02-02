@@ -43,7 +43,7 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 UserSchema.methods.signJWToken = function () {
-  return jwt.sign({ id: this._id }, "asvasvasv13", {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 };

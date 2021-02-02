@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 
 import "./Map.css";
 
 const Map = (props) => {
   const mapRef = useRef();
-  console.log(props)
+
   const { center, zoom } = props;
 
   useEffect(() => {

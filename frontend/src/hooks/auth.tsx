@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 
+let logoutTimer: any;
+
 export const useAuth = () => {
   const [isLogged, setIsLogged] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState<Date | null>();
@@ -25,7 +27,6 @@ export const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    let logoutTimer;
     if (user.token && tokenExpirationDate) {
       const remainingTime =
         tokenExpirationDate.getTime() - new Date().getTime();
@@ -40,9 +41,9 @@ export const useAuth = () => {
     if (
       userData &&
       userData.token &&
-      new Date(userData.tokenExpirationDate) > new Date()
+      new Date(userData.expiration) > new Date()
     ) {
-      login(userData, new Date(userData.tokenExpirationDate));
+      login(userData, new Date(userData.expiration));
     }
   }, [login]);
 
