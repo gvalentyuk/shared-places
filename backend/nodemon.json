@@ -1,8 +1,0 @@
-{
-    "env": {
-        "DB_USER":"gleb",
-        "DB_PASSWORD":"qwertyelej",
-        "MAP_KEY":"bkxpFZfhS1OcXnArjUMSjXxz22OtQR0J",
-        "JWT_SECRET":"asvasvasv13"
-    }
-}
